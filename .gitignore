@@ -1,0 +1,7 @@
+# Ignore environment files and build artifacts
+.env
+node_modules
+.expo
+dist
+build
+.DS_Store

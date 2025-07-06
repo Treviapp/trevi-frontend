@@ -1,0 +1,9 @@
+{
+  "name": "Expo Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "forwardPorts": [8081, 19000, 19001, 19002],
+  "postCreateCommand": "npm install",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/expo-cli:1": {}
+  }
+}

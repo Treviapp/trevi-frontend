@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Trevi",
+    "slug": "trevi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+
+    "splash": {
+      "image": "./src/Assets/Images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+
+    "assetBundlePatterns": ["**/*"],
+
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}
