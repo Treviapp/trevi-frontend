@@ -1,4 +1,3 @@
-// src/api/config.js
 import axios from 'axios';
 import { store } from '../redux';
 
@@ -6,7 +5,7 @@ import { store } from '../redux';
    Base URLs
    ------------------------------------------------------------------ */
 // ngrok tunnel – exposes Laravel dev backend over HTTPS
-const ROOT_URL = 'https://85de-2a0a-ef40-7ce-5901-69ea-63e0-95ad-9f48.ngrok-free.app';
+const ROOT_URL = 'https://5952-2a0a-ef40-755-601-bd6a-bee2-93a5-aff4.ngrok-free.app';
 
 // If you later deploy Trevi, add new lines here:
 // const ROOT_URL = 'https://api-dev.treviapp.com';
@@ -30,8 +29,8 @@ const client = axios.create({
    Attach bearer-token (if a creator logs in later)
    ------------------------------------------------------------------ */
 client.interceptors.request.use(
-  config => {
-    const { authenticationToken } = store.getState().userSession;
+  (config) => {
+    const { authenticationToken } = store.getState().userSession || {};
 
     return {
       ...config,
@@ -44,7 +43,7 @@ client.interceptors.request.use(
       },
     };
   },
-  err => Promise.reject(err),
+  (err) => Promise.reject(err)
 );
 
 export { ROOT_URL, BASE_URL, client };

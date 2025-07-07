@@ -35,8 +35,11 @@ export default function CreateEventScreen() {
       })
       .then(({ data }) => {
         console.log('✅ API success:', data);
-        Alert.alert('Event created!', `Your event code is:\n${data.event_code || '— not returned —'}`);
-      })
+        Alert.alert(
+  'Event created!',
+  JSON.stringify(data, null, 2)   // 👈 show full object
+);
+     })
       .catch(error => {
         // NEW: show full backend response
         console.log('❌ API error FULL:', JSON.stringify(error.response?.data, null, 2));
