@@ -3,19 +3,43 @@
     "name": "Trevi",
     "slug": "trevi",
     "version": "1.0.0",
+    "scheme": "treviapp",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-
+    "icon": "./src/Assets/Images/icon.png",
     "splash": {
       "image": "./src/Assets/Images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#E6DAF5"
     },
-
-    "assetBundlePatterns": ["**/*"],
-
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.amandatreviapp.trevi",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "resizeMode": "cover",
+          "backgroundColor": "#E6DAF5",
+          "image": "./src/Assets/Images/splash.png"
+        }
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "589e2861-59b7-4fa3-bf31-93de216d73b0"
+      }
     }
   }
 }

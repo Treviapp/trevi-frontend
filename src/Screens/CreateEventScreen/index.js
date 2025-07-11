@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-
 import styles from './Style';
 import { client } from '../../api/config'; // axios instance
 
-export default function CreateEventScreen() {
+export default function CreateEventScreen({ navigation }) {
   const [fullName, setFullName] = useState('');
   const [eventName, setEventName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,13 +34,17 @@ export default function CreateEventScreen() {
       })
       .then(({ data }) => {
         console.log('✅ API success:', data);
-        Alert.alert(
-  'Event created!',
-  JSON.stringify(data, null, 2)   // 👈 show full object
-);
-     })
+
+        // Navigate to EventSummary screen with data
+        navigation.navigate('EventSummary', {
+          eventName,
+          fullName,
+          email,
+          hostCode: data.host_code,
+          guestCode: data.guest_code,
+        });
+      })
       .catch(error => {
-        // NEW: show full backend response
         console.log('❌ API error FULL:', JSON.stringify(error.response?.data, null, 2));
         console.log('❌ API error MSG:', error.message || error);
 
@@ -86,5 +89,3 @@ export default function CreateEventScreen() {
     </View>
   );
 }
-
-
