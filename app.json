@@ -3,7 +3,7 @@
     "name": "Trevi",
     "slug": "trevi",
     "version": "1.0.0",
-    "scheme": "treviapp",
+    "scheme": "trevi",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./src/Assets/Images/icon.png",

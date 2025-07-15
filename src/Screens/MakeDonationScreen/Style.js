@@ -4,7 +4,7 @@ export default StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '600',
-    color: '#005F5F', // deep aquamarine tone
+    color: '#005F5F',
     textAlign: 'center',
     marginBottom: 30,
     fontFamily: 'Poppins-Bold',
@@ -18,7 +18,7 @@ export default StyleSheet.create({
     width: '100%',
   },
   button: {
-    backgroundColor: '#00CFC1', // vibrant aquamarine
+    backgroundColor: '#00CFC1',
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
@@ -29,5 +29,12 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'Poppins-SemiBold',
+  },
+  card: {
+    backgroundColor: '#FFFFFF', // Use valid hex for Stripe
+    borderRadius: 10,
+    fontSize: 16,
+    padding: 10,
+    color: '#000000', // Ensure text color is valid
   },
 });

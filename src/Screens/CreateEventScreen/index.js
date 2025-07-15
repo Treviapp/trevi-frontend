@@ -1,63 +1,81 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+  View,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import styles from './Style';
-import { client } from '../../api/config'; // axios instance
+import { client } from '../../api/config';
+import CreateEventBackground from '../CreateEventBackground';
 
 export default function CreateEventScreen({ navigation }) {
   const [fullName, setFullName] = useState('');
   const [eventName, setEventName] = useState('');
   const [email, setEmail] = useState('');
+  const [guestMessage, setGuestMessage] = useState('');
+  const [image, setImage] = useState(null);
 
-  const handleCreate = () => {
-    console.log('🔔 handleCreate pressed');
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.8,
+    });
 
-    // Basic validation
-    if (!fullName.trim()) {
-      Alert.alert('Validation', 'Please enter your full name.');
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const handleCreate = async () => {
+    if (!fullName.trim() || !eventName.trim() || !email.trim()) {
+      Alert.alert('Validation', 'Please fill in all fields.');
       return;
     }
-    if (!eventName.trim()) {
-      Alert.alert('Validation', 'Please enter an event name.');
-      return;
-    }
-    if (!email.trim()) {
-      Alert.alert('Validation', 'Please enter your email.');
-      return;
-    }
 
-    // API call to Laravel
-    client
-      .post('/campaigns', {
-        name: eventName,
-        creator_email: email,
-        creator_name: fullName,
-      })
-      .then(({ data }) => {
-        console.log('✅ API success:', data);
+    const formData = new FormData();
+    formData.append('creator_name', fullName);
+    formData.append('name', eventName);
+    formData.append('creator_email', email);
+    formData.append('guest_message', guestMessage);
 
-        // Navigate to EventSummary screen with data
-        navigation.navigate('EventSummary', {
-          eventName,
-          fullName,
-          email,
-          hostCode: data.host_code,
-          guestCode: data.guest_code,
-        });
-      })
-      .catch(error => {
-        console.log('❌ API error FULL:', JSON.stringify(error.response?.data, null, 2));
-        console.log('❌ API error MSG:', error.message || error);
+    if (image) {
+      const filename = image.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename);
+      const ext = match ? match[1] : 'jpg';
 
-        Alert.alert(
-          'Error',
-          error.response?.data?.message ||
-            'Something went wrong. Please check the console for details.'
-        );
+      formData.append('host_image', {
+        uri: image,
+        name: `host.${ext}`,
+        type: `image/${ext}`,
       });
+    }
+
+    try {
+      const response = await client.post('/campaigns', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const data = response.data;
+      navigation.navigate('CreateEventSuccessScreen', {
+        hostCode: data.host_code,
+        guestCode: data.guest_code,
+        fullName,
+        eventName,
+        email,
+      });
+    } catch (error) {
+      console.error('❌ Error:', error, error.response?.data);
+      Alert.alert('Error', 'Could not create event. Please try again.');
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <CreateEventBackground>
       <Text style={styles.title}>Create a New Event</Text>
 
       <TextInput
@@ -83,9 +101,30 @@ export default function CreateEventScreen({ navigation }) {
         onChangeText={setEmail}
       />
 
+      <TextInput
+        style={[styles.input, { height: 100 }]}
+        placeholder="Write a message for your guests..."
+        multiline
+        value={guestMessage}
+        onChangeText={setGuestMessage}
+      />
+
+      <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+        <Text style={styles.buttonText}>
+          {image ? 'Change Image' : 'Upload Image'}
+        </Text>
+      </TouchableOpacity>
+
+      {image && (
+        <Image
+          source={{ uri: image }}
+          style={{ width: 150, height: 150, marginVertical: 10 }}
+        />
+      )}
+
       <TouchableOpacity style={styles.button} onPress={handleCreate}>
         <Text style={styles.buttonText}>Create Event</Text>
       </TouchableOpacity>
-    </View>
+    </CreateEventBackground>
   );
 }

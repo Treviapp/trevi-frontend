@@ -1,48 +1,37 @@
 import React from 'react';
-
-// Libraries
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-
-// Stacks
-import AuthStack from './AuthStack';
+// Trevi Stack
 import AppStack from './AppStack';
 
 // Screens
 import Splash from '../Screens/Splash';
 import Carousal from '../Screens/Carousal';
 
-// Redux Imports
+// Redux Imports (optional – you can remove if not using Redux anymore)
 import { useSelector } from 'react-redux';
 import { isReadyRef, navigationRef } from './LinkingNavigator';
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator();
 
 const Routes = () => {
-
-    const { isSignedIn = false } = useSelector(state => state.userSession)
-    return (
-        <NavigationContainer
-            ref={navigationRef}
-            onReady={() => {
-                isReadyRef.current = true;
-            }}>
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false
-                }} >
-                <Stack.Screen name="Splash" component={Splash} />
-                <Stack.Screen name="Carousal" component={Carousal} />
-
-                {isSignedIn ?
-                    <Stack.Screen name='AfterSplash' component={AppStack} />
-                    :
-                    <Stack.Screen name='AfterSplash' component={AuthStack} />
-                }
-            </Stack.Navigator>
-        </NavigationContainer>
-    )
-}
+  return (
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        isReadyRef.current = true;
+      }}
+    >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={Splash} />
+        <Stack.Screen name="Carousal" component={Carousal} />
+        <Stack.Screen name="App" component={AppStack} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default Routes;
+
+
