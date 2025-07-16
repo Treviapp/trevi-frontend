@@ -35,8 +35,5 @@
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios"
-  },
-  "devDependencies": {
-    "expo-modules-autolinking": "^2.1.14"
   }
 }
