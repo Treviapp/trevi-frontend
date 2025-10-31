@@ -31,7 +31,7 @@ export default function MakePaymentScreen({ route, navigation }) {
   const isBusy = submitting || loading;
 
   const fetchPaymentIntent = async (formData) => {
-    const API_URL = `${API_BASE_URL}/stripe/payment-intent`;
+    const API_URL = `${API_BASE_URL}/stripe/create-payment-intent`;
     let lastErr;
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
