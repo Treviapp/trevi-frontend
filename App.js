@@ -1,14 +1,17 @@
 import React from 'react';
 import { StripeProvider } from '@stripe/stripe-react-native';
-import { registerRootComponent } from 'expo';
 import Routes from './src/navigation/Routes';
+import { STRIPE_PUBLISHABLE_KEY } from './src/api/config';
 
 export default function App() {
+  if (!STRIPE_PUBLISHABLE_KEY) {
+    console.warn('Stripe publishable key is missing. Falling back to rendering without Stripe.');
+    return <Routes />;
+  }
+
   return (
-    <StripeProvider publishableKey="pk_live_51RXKLjIZnBW7XxVHInY17LFasEoyTuZB88ytB4LLScE7L113h1Qzgk19T2R9ROiNQ8TBUYvBIJ0yUPkLVSM9LuGB00EFXISZp1">
+    <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
       <Routes />
     </StripeProvider>
   );
 }
-
-registerRootComponent(App);
