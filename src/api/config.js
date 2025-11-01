@@ -53,11 +53,31 @@ const resolveStripeKey = () => {
   const expoExtra =
     Constants?.expoConfig?.extra || Constants?.manifest?.extra || {};
 
-  return (
-    process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
-    expoExtra.stripePublishableKey ||
-    "pk_test_51RXKLrIMEUGCmkevn3YDd0y1oRaPogoAAo5MpDFrMlfrM9YdO9ISBqrqaAl6kwoLQfQjScaaepDW8ZE0Tx7vyIKx00eiMFSmEZ"
-  );
+  const {
+    stripeMode = "live",
+    stripePublishableKey,
+    stripeLivePublishableKey,
+    stripeTestPublishableKey,
+  } = expoExtra;
+
+  const fallbackLiveKey =
+    "pk_live_51RXKLjIZnBW7XxVHInY17LFasEoyTuZB88ytB4LLScE7L113h1Qzgk19T2R9ROiNQ8TBUYvBIJ0yUPkLVSM9LuGB00EFXISZp1";
+  const fallbackTestKey =
+    "pk_test_51RXKLrIMEUGCmkevn3YDd0y1oRaPogoAAo5MpDFrMlfrM9YdO9ISBqrqaAl6kwoLQfQjScaaepDW8ZE0Tx7vyIKx00eiMFSmEZ";
+
+  if (process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    return process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  }
+
+  if (stripePublishableKey) {
+    return stripePublishableKey;
+  }
+
+  if (stripeMode === "test") {
+    return stripeTestPublishableKey || fallbackTestKey;
+  }
+
+  return stripeLivePublishableKey || fallbackLiveKey;
 };
 
 export const STRIPE_PUBLISHABLE_KEY = resolveStripeKey();

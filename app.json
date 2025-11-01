@@ -54,7 +54,8 @@
       ]
     ],
     "extra": {
-      "stripePublishableKey": "pk_test_51RXKLrIMEUGCmkevn3YDd0y1oRaPogoAAo5MpDFrMlfrM9YdO9ISBqrqaAl6kwoLQfQjScaaepDW8ZE0Tx7vyIKx00eiMFSmEZ",
+      "stripeMode": "live",
+      "stripeLivePublishableKey": "pk_live_51RXKLjIZnBW7XxVHInY17LFasEoyTuZB88ytB4LLScE7L113h1Qzgk19T2R9ROiNQ8TBUYvBIJ0yUPkLVSM9LuGB00EFXISZp1",
       "eas": {
         "projectId": "589e2861-59b7-4fa3-bf31-93de216d73b0"
       },
