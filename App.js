@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import Routes from './src/navigation/Routes';
 import { STRIPE_PUBLISHABLE_KEY } from './src/api/config';
@@ -10,7 +10,10 @@ export default function App() {
   }
 
   const maskedKey = `${STRIPE_PUBLISHABLE_KEY.slice(0, 10)}...${STRIPE_PUBLISHABLE_KEY.slice(-6)}`;
-  console.warn('?? Stripe publishable key in use:', maskedKey);
+
+  useEffect(() => {
+    console.warn('?? Stripe publishable key in use:', maskedKey);
+  }, [maskedKey]);
 
   return (
     <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
