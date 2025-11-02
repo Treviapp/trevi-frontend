@@ -8,9 +8,37 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
-import { client } from '../../api/config';
+import { client, API_BASE_URL } from '../../api/config';
 import styles from './Style';
 import EventSummaryBackground from '../EventSummaryBackground';
+
+const API_ORIGIN = API_BASE_URL.replace(/\/?api$/, '');
+
+const buildAbsoluteUri = (value) => {
+  if (!value || typeof value !== 'string') return null;
+  if (value.startsWith('data:')) return value;
+  if (/^https?:\/\//i.test(value)) return value;
+
+  const normalizedPath = value.replace(/^\/+/, '');
+  return `${API_ORIGIN}/${normalizedPath}`;
+};
+
+const getHostImageUri = (campaign) => {
+  if (!campaign) return null;
+  const {
+    host_image_url,
+    host_image,
+    photo_url,
+    photo_path,
+  } = campaign;
+
+  return (
+    buildAbsoluteUri(host_image_url) ||
+    buildAbsoluteUri(host_image) ||
+    buildAbsoluteUri(photo_url) ||
+    buildAbsoluteUri(photo_path)
+  );
+};
 
 export default function EventSummaryScreen({ route, navigation }) {
   // ✅ handle both guestCode and code params
@@ -120,18 +148,22 @@ export default function EventSummaryScreen({ route, navigation }) {
     );
   }
 
+  const hostImageUri = getHostImageUri(campaign);
+
   return (
     <EventSummaryBackground>
       <Text style={styles.handwritingTitle}>Welcome to {campaign.title}</Text>
       <Text style={styles.subtitle}>Hosted by {campaign.host}</Text>
 
-      {campaign.host_image && (
-        <Image
-          source={{ uri: campaign.host_image }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      )}
+      <Image
+        source={
+          hostImageUri
+            ? { uri: hostImageUri }
+            : require('../../Assets/Images/drinksPlaceHolder.png')
+        }
+        style={[styles.image, !hostImageUri && styles.imagePlaceholder]}
+        resizeMode={hostImageUri ? 'cover' : 'contain'}
+      />
 
       <Text style={styles.message}>
         {campaign.guest_message || 'Welcome and thank you for celebrating with me!'}

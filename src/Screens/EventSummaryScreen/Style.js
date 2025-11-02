@@ -43,10 +43,15 @@ export default StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: 200,
-    height: 200,
-    borderRadius: 12,
-    marginVertical: 16,
+    width: 220,
+    height: 220,
+    borderRadius: 18,
+    marginVertical: 20,
     alignSelf: 'center',
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    overflow: 'hidden',
+  },
+  imagePlaceholder: {
+    backgroundColor: 'rgba(255,255,255,0.4)',
   },
 });

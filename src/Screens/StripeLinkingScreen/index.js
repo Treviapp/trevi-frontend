@@ -103,14 +103,42 @@ export default function StripeLinkingScreen({ route }) {
       formData.append('name', eventName);
       formData.append('guest_message', guestMessage);
       if (image?.uri) {
+        const fileNameFromPicker = image.fileName || image.filename;
+        const uriParts = image.uri.split('/');
+        const fallbackName = uriParts[uriParts.length - 1] || `host-image-${Date.now()}`;
+        const inferredExtension =
+          (fileNameFromPicker && fileNameFromPicker.split('.').pop()) ||
+          (fallbackName.includes('.') && fallbackName.split('.').pop()) ||
+          (image.mimeType && image.mimeType.split('/').pop()) ||
+          'jpg';
+
+        const normalizedExtension = inferredExtension.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        const finalExtension = normalizedExtension === 'jpeg' || normalizedExtension === 'jpg'
+          ? 'jpg'
+          : normalizedExtension || 'jpg';
+
+        const mimeType = image.mimeType || `image/${finalExtension === 'jpg' ? 'jpeg' : finalExtension}`;
+        const safeFileName = (fileNameFromPicker || fallbackName).includes('.')
+          ? (fileNameFromPicker || fallbackName)
+          : `host-image.${finalExtension}`;
+
+        const normalizedUri = image.uri;
+
+        console.log('🖼️ Attaching host image file', {
+          name: safeFileName,
+          type: mimeType,
+          uri: normalizedUri,
+        });
+
         formData.append('host_image', {
-          uri: image.uri,
-          name: 'host_image.jpg',
-          type: 'image/jpeg',
+          uri: normalizedUri,
+          name: safeFileName,
+          type: mimeType,
         });
       }
 
       const campaignData = await createCampaign(formData);
+      console.log('✅ Campaign created:', campaignData);
       const { host_code, guest_code } = campaignData || {};
       if (!host_code) throw new Error('No host_code returned from server');
 
