@@ -112,12 +112,17 @@ export default function MakePaymentScreen({ route, navigation }) {
         });
       }
 
+      // ✅ Fetch payment intent from backend
       const data = await fetchPaymentIntent(formData);
       console.log('✅ Parsed JSON response:', data);
-
+console.log('🎫 Full clientSecret from backend:', data?.clientSecret);
+      // ✅ Use clientSecret instead of paymentIntent
       const clientSecret = data?.clientSecret;
-      if (!clientSecret) throw new Error('No client secret returned');
+      if (!clientSecret) throw new Error('No client secret returned from server');
 
+      console.log('🎟️ Using clientSecret:', clientSecret);
+
+      // ✅ Confirm the payment with Stripe
       const { paymentIntent, error } = await confirmPayment(clientSecret, {
         paymentMethodType: 'Card',
         paymentMethodData: { billingDetails: { name } },
