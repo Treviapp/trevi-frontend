@@ -12,7 +12,7 @@ export default function App() {
   const maskedKey = `${STRIPE_PUBLISHABLE_KEY.slice(0, 10)}...${STRIPE_PUBLISHABLE_KEY.slice(-6)}`;
 
   useEffect(() => {
-    console.warn('?? Stripe publishable key in use:', maskedKey);
+    console.log('?? Stripe publishable key in use:', maskedKey);
   }, [maskedKey]);
 
   return (
