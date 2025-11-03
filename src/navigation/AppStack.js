@@ -2,6 +2,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelcomeScreen from '../Screens/WelcomeScreen';
+import GiftReelMakePaymentScreen from '../Screens/GiftReelMakePaymentScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,13 @@ export default function AppStack() {
       <Stack.Screen name="MakePaymentScreen" getComponent={() => require('../Screens/MakePaymentScreen').default} />
       <Stack.Screen name="DonationSuccess" getComponent={() => require('../Screens/DonationSuccessScreen').default} />
       <Stack.Screen name="GiftListScreen" getComponent={() => require('../Screens/GiftListScreen').default} />
+
+      {/* 🎬 Gift Reel */}
+      <Stack.Screen
+        name="GiftReelMakePaymentScreen"
+        component={GiftReelMakePaymentScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }

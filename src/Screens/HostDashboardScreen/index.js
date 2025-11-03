@@ -24,6 +24,7 @@ export default function HostDashboardScreen({ route, navigation }) {
   const [campaign, setCampaign] = useState(null);
   const [donations, setDonations] = useState([]);
   const [syncing, setSyncing] = useState(false);
+  const [isGiftReelOrdered, setIsGiftReelOrdered] = useState(false);
   const navigationHook = useNavigation(); // kept to minimise diffs
 
   const mounted = useRef(true);
@@ -247,6 +248,21 @@ export default function HostDashboardScreen({ route, navigation }) {
             <Text style={styles.viewGiftsButtonText}>View My Gifts</Text>
           </TouchableOpacity>
 
+          {/* ✅ New Order Gift Reel button */}
+          <TouchableOpacity
+            style={[styles.button, isGiftReelOrdered && { backgroundColor: 'gray' }]}
+            onPress={() => {
+              if (!isGiftReelOrdered) {
+                navigation.navigate('GiftReelMakePaymentScreen', { hostCode: campaign.host_code });
+              }
+            }}
+            disabled={isGiftReelOrdered}
+          >
+            <Text style={styles.buttonText}>
+              {isGiftReelOrdered ? 'Gift Reel Ordered' : 'Order Your Gift Reel'}
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.homeButton} onPress={handleGoHome}>
             <Text style={styles.homeButtonText}>Home</Text>
           </TouchableOpacity>
@@ -286,4 +302,3 @@ const localStyles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
