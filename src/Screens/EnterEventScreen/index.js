@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import styles from './Style';
 import EnterEventBackground from '../EnterEventBackground';
-import { client } from '../../api/config'; // ✅ axios instance
+import { client } from '../../api/config';
 
 export default function EnterEventScreen({ navigation }) {
   const [code, setCode] = useState('');
@@ -103,7 +103,8 @@ export default function EnterEventScreen({ navigation }) {
     <EnterEventBackground>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}
