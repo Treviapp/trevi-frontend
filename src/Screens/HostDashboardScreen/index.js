@@ -24,8 +24,8 @@ export default function HostDashboardScreen({ route, navigation }) {
   const [campaign, setCampaign] = useState(null);
   const [donations, setDonations] = useState([]);
   const [syncing, setSyncing] = useState(false);
-  const [isGiftReelOrdered, setIsGiftReelOrdered] = useState(false);
-  const navigationHook = useNavigation(); // kept to minimise diffs
+  const [giftReelOrdered, setGiftReelOrdered] = useState(false);
+  const navigationHook = useNavigation();
 
   const mounted = useRef(true);
   const slowTimerRef = useRef(null);
@@ -50,7 +50,6 @@ export default function HostDashboardScreen({ route, navigation }) {
     if (initialCode) {
       handleLoadDashboard();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCode]);
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -89,14 +88,13 @@ export default function HostDashboardScreen({ route, navigation }) {
 
     try {
       let res;
-      // try once, then one retry on transient errors
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
           res = await client.get(`/campaigns/host/${trimmed}`, { timeout: 15000 });
           break;
         } catch (err) {
           if (attempt === 0 && isRetriable(err)) {
-            await sleep(700); // small backoff
+            await sleep(700);
             continue;
           }
           throw err;
@@ -107,6 +105,7 @@ export default function HostDashboardScreen({ route, navigation }) {
       const data = res.data;
       setCampaign(data);
       setDonations(dedupe(data.donations || []));
+      setGiftReelOrdered(!!data.gift_reel_purchased); // ✅ NEW LINE
       console.log('🧪 Donations loaded:', data.donations);
     } catch (err) {
       if (!mounted.current) return;
@@ -129,14 +128,13 @@ export default function HostDashboardScreen({ route, navigation }) {
         clearTimeout(slowTimerRef.current);
         slowTimerRef.current = null;
       }
-      // brief initial sync to catch webhook/db lag
       if (trimmed) startInitialSync(trimmed);
     }
   };
 
   const startInitialSync = async (trimmed) => {
     setSyncing(true);
-    const backoffs = [1200, 1700, 2500, 3500, 5000]; // ~14–16s total + jitter
+    const backoffs = [1200, 1700, 2500, 3500, 5000];
     const t0 = Date.now();
     const MAX_MS = 20000;
 
@@ -152,11 +150,9 @@ export default function HostDashboardScreen({ route, navigation }) {
         const unique = dedupe(res.data?.donations || []);
         if (unique.length !== donationsRef.current.length) {
           setDonations(unique);
-          break; // stop once we detect a change
+          break;
         }
-      } catch (_e) {
-        // swallow during soft sync
-      }
+      } catch (_e) {}
       i++;
     }
     if (mounted.current) setSyncing(false);
@@ -177,6 +173,16 @@ export default function HostDashboardScreen({ route, navigation }) {
     navigation.navigate('Welcome');
   };
 
+  const handleGiftReel = () => {
+    navigation.navigate('GiftReelMakePaymentScreen', {
+      hostCode: campaign?.host_code,
+      onComplete: async () => {
+        setGiftReelOrdered(true); // ✅ GREY OUT IMMEDIATELY
+        await handleLoadDashboard(); // ✅ RELOAD CAMPAIGN TO CHECK BACKEND
+      },
+    });
+  };
+
   return (
     <HostDashboardBackground>
       {!campaign && !initialCode ? (
@@ -195,11 +201,7 @@ export default function HostDashboardScreen({ route, navigation }) {
             onPress={handleLoadDashboard}
             disabled={loading}
           >
-            {loading ? (
-              <ActivityIndicator />
-            ) : (
-              <Text style={styles.buttonText}>View Dashboard</Text>
-            )}
+            {loading ? <ActivityIndicator /> : <Text style={styles.buttonText}>View Dashboard</Text>}
           </TouchableOpacity>
           <TouchableOpacity style={styles.homeButton} onPress={handleGoHome} disabled={loading}>
             <Text style={styles.homeButtonText}>Home</Text>
@@ -231,36 +233,26 @@ export default function HostDashboardScreen({ route, navigation }) {
 
             <View style={{ alignItems: 'center', marginVertical: 5 }}>
               <Text style={styles.qrLabel}>Your Event QR code</Text>
-              <QRCode
-                value={`${FRONTEND_BASE}${campaign.guest_code}`}
-                size={180}
-              />
+              <QRCode value={`${FRONTEND_BASE}${campaign.guest_code}`} size={180} />
               <Text style={styles.qrText}>
                 Share this QR code with guests & donors to allow instant access to your event
               </Text>
             </View>
           </View>
 
+          {/* 🎬 Order Gift Reel */}
           <TouchableOpacity
-            style={styles.viewGiftsButton}
-            onPress={handleViewGifts}
-          >
-            <Text style={styles.viewGiftsButtonText}>View My Gifts</Text>
-          </TouchableOpacity>
-
-          {/* ✅ New Order Gift Reel button */}
-          <TouchableOpacity
-            style={[styles.button, isGiftReelOrdered && { backgroundColor: 'gray' }]}
-            onPress={() => {
-              if (!isGiftReelOrdered) {
-                navigation.navigate('GiftReelMakePaymentScreen', { hostCode: campaign.host_code });
-              }
-            }}
-            disabled={isGiftReelOrdered}
+            style={[styles.button, giftReelOrdered && { backgroundColor: 'gray' }]}
+            onPress={!giftReelOrdered ? handleGiftReel : null}
+            disabled={giftReelOrdered}
           >
             <Text style={styles.buttonText}>
-              {isGiftReelOrdered ? 'Gift Reel Ordered' : 'Order Your Gift Reel'}
+              {giftReelOrdered ? 'Gift Reel Ordered' : 'Order Your Gift Reel'}
             </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.viewGiftsButton} onPress={handleViewGifts}>
+            <Text style={styles.viewGiftsButtonText}>View My Gifts</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.homeButton} onPress={handleGoHome}>
@@ -270,9 +262,7 @@ export default function HostDashboardScreen({ route, navigation }) {
       ) : (
         <View style={{ marginTop: 50, alignItems: 'center' }}>
           <ActivityIndicator />
-          {loading && (
-            <Text style={{ marginTop: 8 }}>{slow ? 'Still working…' : 'Loading…'}</Text>
-          )}
+          {loading && <Text style={{ marginTop: 8 }}>{slow ? 'Still working…' : 'Loading…'}</Text>}
         </View>
       )}
     </HostDashboardBackground>
@@ -302,3 +292,4 @@ const localStyles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
