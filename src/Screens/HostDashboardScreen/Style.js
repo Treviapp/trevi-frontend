@@ -85,7 +85,7 @@ export default StyleSheet.create({
     color: '#000000',
   },
   button: {
-    backgroundColor: '#cbe6c7',
+    backgroundColor: '#81bfb7',
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 12,
@@ -93,11 +93,11 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: '80%',
+    width: '60%',
   },
   buttonText: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
     textAlign: 'center',
   },

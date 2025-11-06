@@ -22,7 +22,7 @@ export default StyleSheet.create({
     lineHeight: 22,
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#81bfb7',
     paddingVertical: 12,
     paddingHorizontal: 28,
     borderRadius: 10,
