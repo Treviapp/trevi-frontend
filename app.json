@@ -2,7 +2,7 @@
   "expo": {
     "name": "Trevi",
     "slug": "trevi",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "scheme": "trevi",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -30,7 +30,7 @@
           "NSAllowsArbitraryLoads": true
         }
       },
-      "buildNumber": "1.0.3",
+      "buildNumber": "1.0.4",
       "splash": {
         "image": "./src/Assets/Images/splash.png",
         "resizeMode": "cover",
